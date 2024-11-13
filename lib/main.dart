@@ -28,37 +28,50 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple, Colors.deepPurpleAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+      body: PageView(
+        scrollDirection: Axis.vertical,
+        children: [
+          parallaxPage(
+              context, "assets/background_layer1.png", "检测手机性能", "保持设备的最佳状态"),
+          parallaxPage(
+              context, "assets/background_layer2.png", "高度安全", "保护您的数据隐私"),
+        ],
+      ),
+    );
+  }
+
+  Widget parallaxPage(
+      BuildContext context, String imagePath, String title, String subtitle) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.asset(
+          imagePath,
+          fit: BoxFit.cover,
         ),
-        child: Center(
+        Positioned(
+          bottom: 100,
+          left: 20,
+          right: 20,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.shield,
-                size: 100,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "欢迎来到安全助手",
-                style: TextStyle(
-                  fontSize: 30,
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              const Text(
-                "保护您的设备安全",
-                style: TextStyle(fontSize: 22, color: Colors.white70),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -66,18 +79,12 @@ class IntroPage extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const HomePage()));
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.deepPurpleAccent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                ),
-                child: const Text("开始使用"),
+                child: const Text("开始检测"),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -93,6 +100,20 @@ class _HomePageState extends State<HomePage> {
   String deviceName = '未知';
   String deviceMemory = '未知';
   String deviceBrand = '未知';
+  bool isDetecting = false;
+  List<String> detectionItems = [
+    "屏幕检测",
+    "摄像头检测",
+    "音频检测",
+    "传感器检测",
+    "电池检测",
+    "网络检测",
+    "存储检测",
+    "GPS定位检测",
+    "Wi-Fi信号强度检测",
+    "蓝牙功能检测",
+    "通话质量检测"
+  ];
 
   @override
   void initState() {
@@ -116,6 +137,25 @@ class _HomePageState extends State<HomePage> {
         deviceBrand = '不可读取设备信息';
       });
     }
+  }
+
+  void startDetectionProcess() {
+    setState(() {
+      isDetecting = true;
+    });
+
+    // Simulate detection process with a delay
+    Future.forEach(detectionItems, (item) {
+      return Future.delayed(const Duration(seconds: 1), () {
+        print("检测完成: $item");
+      });
+    }).then((_) {
+      // Once done
+      setState(() {
+        isDetecting = false;
+      });
+      // Navigate to results page or display detection results
+    });
   }
 
   @override
@@ -143,10 +183,10 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Start the detection process
-              },
-              child: const Text("开始检测"),
+              onPressed: isDetecting ? null : startDetectionProcess,
+              child: isDetecting
+                  ? const CircularProgressIndicator()
+                  : const Text("开始检测"),
             ),
           ],
         ),
