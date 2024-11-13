@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '手机质量检测器',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
       home: const IntroPage(),
@@ -28,40 +28,55 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple, Colors.blue],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple, Colors.deepPurpleAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.shield,
+                size: 100,
+                color: Colors.white,
               ),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "全面检测手机性能，确保您的设备健康",
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                  textAlign: TextAlign.center,
+              const SizedBox(height: 20),
+              const Text(
+                "欢迎来到安全助手",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()));
-                  },
-                  child: const Text("开始检测"),
+              ),
+              const Text(
+                "保护您的设备安全",
+                style: TextStyle(fontSize: 22, color: Colors.white70),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomePage()));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.deepPurpleAccent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                 ),
-              ],
-            ),
+                child: const Text("开始使用"),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -95,7 +110,6 @@ class _HomePageState extends State<HomePage> {
         deviceBrand = androidInfo.brand ?? '未知';
       });
     } catch (e) {
-      // Handle error if info can't be fetched
       setState(() {
         deviceName = '不可读取设备信息';
         deviceMemory = '不可读取设备信息';
