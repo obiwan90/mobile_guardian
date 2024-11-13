@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -52,8 +54,7 @@ class IntroPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const MyHomePage(title: '首页')));
+                            builder: (context) => const HomePage()));
                   },
                   child: const Text("开始检测"),
                 ),
@@ -66,22 +67,74 @@ class IntroPage extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  final String title;
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String deviceName = '未知';
+  String deviceMemory = '未知';
+  String deviceBrand = '未知';
+
+  @override
+  void initState() {
+    super.initState();
+    _getDeviceInfo();
+  }
+
+  Future<void> _getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    try {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      setState(() {
+        deviceName = androidInfo.model ?? '未知';
+        deviceMemory = androidInfo.systemFeatures.join(', ') ?? '未知';
+        deviceBrand = androidInfo.brand ?? '未知';
+      });
+    } catch (e) {
+      // Handle error if info can't be fetched
+      setState(() {
+        deviceName = '不可读取设备信息';
+        deviceMemory = '不可读取设备信息';
+        deviceBrand = '不可读取设备信息';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(title),
+        title: const Text('首页'),
       ),
       body: Center(
-        child: const Text(
-          '欢迎来到手机质量检测器！',
-          style: TextStyle(fontSize: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "设备型号: $deviceName",
+              style: const TextStyle(fontSize: 24),
+            ),
+            Text(
+              "内存信息: $deviceMemory",
+              style: const TextStyle(fontSize: 24),
+            ),
+            Text(
+              "品牌: $deviceBrand",
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Start the detection process
+              },
+              child: const Text("开始检测"),
+            ),
+          ],
         ),
       ),
     );
